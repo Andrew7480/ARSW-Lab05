@@ -18,9 +18,6 @@ export default function App() {
   const unsubRef   = useRef(null)
   const socketRef  = useRef(null)
 
-  // La base URL depende de la tecnología elegida
-  const base = tech === 'stomp' ? API_BASE : IO_BASE
-
   // ── Helpers ─────────────────────────────────────────────────────────────────
 
   function drawCanvas(pts) {
@@ -39,7 +36,7 @@ export default function App() {
   async function loadList() {
     if (!author) return
     try {
-      const res = await fetch(`${base}/api/blueprints/${author}`).then(r => r.json())
+      const res = await fetch(`${API_BASE}/api/blueprints/${author}`).then(r => r.json())
       setBlueprintsList(Array.from(res.data ?? []))
     } catch {
       setBlueprintsList([])
@@ -58,7 +55,7 @@ export default function App() {
   useEffect(() => {
     if (!name) { setPoints([]); return }
     async function load() {
-      const res = await fetch(`${base}/api/blueprints/${author}/${name}`).then(r => r.json())
+      const res = await fetch(`${API_BASE}/api/blueprints/${author}/${name}`).then(r => r.json())
       setPoints(res.data?.points ?? [])
     }
     load()
@@ -135,7 +132,7 @@ export default function App() {
   async function handleCreate() {
     const newName = prompt('Nombre del nuevo plano:')
     if (!newName?.trim()) return
-    await fetch(`${base}/api/blueprints`, {
+    await fetch(`${API_BASE}/api/blueprints`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ author, name: newName.trim(), points: [] })
@@ -147,7 +144,7 @@ export default function App() {
 
   async function handleSave() {
     if (!name) return
-    await fetch(`${base}/api/blueprints/${author}/${name}`, {
+    await fetch(`${API_BASE}/api/blueprints/${author}/${name}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(points)
@@ -157,7 +154,7 @@ export default function App() {
 
   async function handleDelete() {
     if (!name) return
-    await fetch(`${base}/api/blueprints/${author}/${name}`, { method: 'DELETE' })
+    await fetch(`${API_BASE}/api/blueprints/${author}/${name}`, { method: 'DELETE' })
     setName('')
     setPoints([])
     loadList()
